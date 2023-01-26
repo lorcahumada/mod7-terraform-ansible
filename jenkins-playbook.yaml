@@ -1,0 +1,58 @@
+- hosts: vm-jenkins
+  remote_user: jenkinsUser
+  become: true
+  tasks:
+    - name: Import jenkins key from url
+      become: true
+      apt_key:
+        state: present
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+    - name: Append debian package to apt repo
+      apt_repository: 
+        repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+        state: present
+
+    # - name: Append java package to apt repo
+    #   apt_repository: 
+    #     repo: 'deb http://ftp.debian.org/debian stretch-backports main'
+    #     state: present
+
+    - name: apt update
+      apt:
+        update_cache: yes
+
+    # Por problemas de compatibilidad, se instala Java manualmente en la VM
+    # - name: Install java
+    #   apt:
+    #     name: openjdk-11-jdk
+    #     state: present 
+
+    - name: Install Jenkins
+      apt: 
+        name: jenkins
+        update_cache: yes
+        state: present
+
+    - name: Install jenkins
+      apt:
+        name: jenkins
+        state: latest
+
+    - name: daemon-reload to pick up config changes
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Start jenkins
+      ansible.builtin.systemd:
+        name: jenkins
+        state: started
+
+    - name: Init password Jenkins
+      shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+      changed_when: false
+      register: result
+
+    - name: Print init password Jenkins
+      debug:
+        var: result.stdout
