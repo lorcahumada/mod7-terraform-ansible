@@ -1,0 +1,9 @@
+variable "rg_name" {}
+variable "global_location" {}
+variable "vnet_name" {}
+variable "vnet_address_space" {}
+variable "subnet_address_prefixes" {}
+variable "nic_name" {}
+variable "vm_name" {}
+variable "vm_username" {}
+variable "vm_password" {}

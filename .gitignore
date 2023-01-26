@@ -1,0 +1,5 @@
+virtual-machine/providers.tf
+aks/providers.tf
+.terraform
+.terraform.lock.hcl
+plan.out
